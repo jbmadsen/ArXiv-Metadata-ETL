@@ -6,8 +6,9 @@ ArXiv Metadata from Kaggle ETL pipeline
 
 ## Plan of attack
 
+```
 Assets
-	[All assets needed for README]
++-- [All assets needed for README]
 Airflow
 	[Dags]
 	[Plugins]
@@ -24,9 +25,9 @@ Setup
   [misc setup scripts needed]
 config.cfg
 README.md
+```
 
-
-
+```
 TODO:
 	Load data from sources to disk
 		Source 1: Kaggle (download .json files)
@@ -35,4 +36,4 @@ TODO:
 	Run empty airflow
 	Add connections/variables/users to airflow
 	Load and transform data from S3 into Redshift/Postgres using Airflow
-
+```
