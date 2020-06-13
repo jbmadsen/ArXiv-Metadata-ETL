@@ -8,7 +8,7 @@ ArXiv Metadata from Kaggle ETL pipeline
 
 ```
 Assets
-+-- [All assets needed for README]
+	[All assets needed for README]
 Airflow
 	[Dags]
 	[Plugins]
@@ -22,7 +22,7 @@ Setup
 	[Download script OR README for how to download all needed data from Kaggle + ArXiv website]
 	[Script for loading all data to S3]
 	[Script for adding variables/connections/users to Airflow]
-  [misc setup scripts needed]
+	[misc setup scripts needed]
 config.cfg
 README.md
 ```
