@@ -1,3 +1,7 @@
+# Custom
+data/subject-classifications.csv
+data/arxiv.zip
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
