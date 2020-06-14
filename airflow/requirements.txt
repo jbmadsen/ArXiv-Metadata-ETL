@@ -1,0 +1,9 @@
+boto
+boto3
+apache-airflow[statsd]
+bs4
+lxml
+html5lib
+paramiko
+scp
+flask-bcrypt

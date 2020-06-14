@@ -1,0 +1,49 @@
+# Docker compose file for running a local Airflow service in Docker
+version: '3.7'
+
+services:
+
+  postgres:
+    container_name: airflow_postgres
+    image: postgres:9.6
+    restart: always
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  webserver:
+    container_name: airflow_webserver
+    image: puckel/docker-airflow:1.10.9
+    #build: .
+    restart: always
+    depends_on:
+      - airflow_postgres
+    environment:
+      - LOAD_EX=n
+      - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
+      - EXECUTOR=Local
+      #- AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      #- AIRFLOW__WEBSERVER__AUTHENTICATE=True
+      #- AIRFLOW__WEBSERVER__AUTH_BACKEND=airflow.contrib.auth.backends.password_auth
+      #- AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ./:/usr/local/airflow
+      - ./requirements.txt:/requirements.txt
+      #- ./airflow.cfg:/airflow.cfg
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
