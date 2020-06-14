@@ -1,5 +1,5 @@
-import download_classifications as dc
-import download_kaggle_data as dk
+import datasets.classifications as dc
+import datasets.kaggle as dk
 
 
 if __name__ == "__main__":
