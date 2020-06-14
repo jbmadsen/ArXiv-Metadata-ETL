@@ -22,7 +22,7 @@ services:
     #build: .
     restart: always
     depends_on:
-      - airflow_postgres
+      - postgres
     environment:
       - LOAD_EX=n
       - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=

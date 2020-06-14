@@ -2,6 +2,14 @@
 data/subject-classifications.csv
 data/arxiv.zip
 
+# Airflow
+airflow/airflow.cfg
+airflow/unittests.cfg
+airflow/airflow-webserver.pid
+airflow/logs/
+airflow/.local/
+airflow/.bash_history
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
