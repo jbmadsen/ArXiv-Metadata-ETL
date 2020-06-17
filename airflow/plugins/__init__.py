@@ -9,6 +9,10 @@ import helpers
 class UdacityPlugin(AirflowPlugin):
     name = "udacity_plugin"
     operators = [
+        operators.StageFromS3ToRedshiftOperator,
+        operators.RedshiftExecuteSQLOperator,
+        operators.DataQualityOperator
     ]
     helpers = [
+        helpers.RedshiftSqlQueries
     ]

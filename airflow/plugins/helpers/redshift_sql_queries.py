@@ -1,4 +1,4 @@
-class SqlQueries:
+class RedshiftSqlQueries:
     create_staging_tables = """
         DROP TABLE IF EXISTS public.staging_metadata;
         CREATE TABLE IF NOT EXISTS public.staging_metadata (
