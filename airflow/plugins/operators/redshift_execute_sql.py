@@ -26,6 +26,7 @@ class RedshiftExecuteSQLOperator(BaseOperator):
         sql_commands = self.sql_query.split(';')
         for command in sql_commands:
             if command.rstrip() != '':
+                self.log.info(f"Executing: {command}")
                 redshift.run(command)
                 
         self.log.info("SQL statements executed successfully")

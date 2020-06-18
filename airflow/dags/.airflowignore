@@ -1,2 +1,4 @@
 # Documentation
 # https://airflow.apache.org/docs/stable/concepts.html#airflowignore
+airflow-db-cleanup.py
+airflow-log-cleanup.py

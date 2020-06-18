@@ -47,9 +47,13 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         """
         Copies data from S3 buckets to redshift cluster into staging tables.
         """
-        self.log.info("Getting AWS and Redshift hooks")
+        self.log.info("Getting AWS hooks")
         aws_hook = AwsHook(self.aws_credentials_id)
+
+        self.log.info("Loading AWS credentials")
         credentials = aws_hook.get_credentials()
+        
+        self.log.info("Getting Redshift hook")
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)        
         
         self.log.info("Clearing data from destination table")
