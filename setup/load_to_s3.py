@@ -76,7 +76,6 @@ if __name__ == "__main__":
     # Configurations
     bucket_name = 'arxiv-etl'
     arxiv_src = '../data/arxiv.zip'
-    classification_src = '../data/subject-classifications.csv'
     data_folder_name = '../data/loading/'
     
     # Connect and create bucket
@@ -91,9 +90,27 @@ if __name__ == "__main__":
         zip_ref.extractall(data_folder_name)
     
     print("Copying data")
-    # Copy the classification data to loading folder to group it, which lets us sync the folder, and we can delete it after to save space
-    classification_dst = '../data/loading/subject-classifications.csv'
-    shutil.copyfile(classification_src, classification_dst)
+
+    # Move files to individual folders
+    os.makedirs(os.path.dirname('../data/loading/metadata/'), exist_ok=True)
+    src = '../data/loading/arxiv-metadata-oai-snapshot.json'
+    dst = '../data/loading/metadata/arxiv-metadata-oai-snapshot.json'
+    shutil.move(src, dst)
+
+    os.makedirs(os.path.dirname('../data/loading/authors/'), exist_ok=True)
+    src = '../data/loading/authors-parsed.json'
+    dst = '../data/loading/authors/authors-parsed.json'
+    shutil.move(src, dst)
+
+    os.makedirs(os.path.dirname('../data/loading/citations/'), exist_ok=True)
+    src = '../data/loading/internal-citations.json'
+    dst = '../data/loading/citations/internal-citations.json'
+    shutil.move(src, dst)
+
+    os.makedirs(os.path.dirname('../data/loading/classifications/'), exist_ok=True)
+    src = '../data/subject-classifications.csv'
+    dst = '../data/loading/classifications/subject-classifications.csv'
+    shutil.move(src, dst)
 
     # Sync data/loaded folder to s3
     # https://dev.to/razcodes/how-to-copy-files-to-s3-using-boto3-41fp
