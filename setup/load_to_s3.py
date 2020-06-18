@@ -41,22 +41,22 @@ def create_bucket(s3_client, bucket_name = 'arxiv-etl'):
         s3_client.create_bucket(Bucket=bucket_name)
 
 
-def upload_file(s3_client, folder_name, file_name, bucket_name, bucket_folder = 'staging'):
+def upload_file(s3_client, bucket_name, path, folder_name, file_name):
     """Uploads file to S3 bucket
 
     Args:
         s3_client (boto3 S3 client): A boto3 S3 client object
-        folder_name (str): Folder path of file to upload
-        file_name (str): Filename of file to upload
         bucket_name (str): S3 bucketname to upload file to
-        bucket_folder (str): S3 folder name to upload file to. Defaults to 'staging'.
+        path (str): Path of file to upload
+        folder_name (str): Folder name of file to upload
+        file_name (str): Filename of file to upload
 
     Returns:
         (object): Upload response from boto3 S3 client
     """
     # https://stackoverflow.com/questions/41827963/track-download-progress-of-s3-file-using-boto3-and-callbacks
     full_name = os.path.join(folder_name, file_name)
-    s3_path = f'{bucket_folder}/{file_name}'
+    s3_path = f'staging/{folder_name}/{file_name}'
     # Create progress info
     statinfo = os.stat(full_name)
     up_progress = progressbar.progressbar.ProgressBar(maxval=statinfo.st_size)
@@ -117,13 +117,19 @@ if __name__ == "__main__":
     directory = os.fsencode(data_folder_name)
 
     print("Starting upload to S3")
-    for file in os.listdir(directory):
-        file_name = os.fsdecode(file)
-        if file_name.endswith(".json") or file_name.endswith(".csv"): 
-            print("Uploading", file_name)
-            response = upload_file(s3_client, data_folder_name, file_name, bucket_name)
-            if response is not None:
-                print("HTTPStatusCode:", response['ResponseMetadata']['HTTPStatusCode'])
+    for folder in os.listdir(directory):
+        folder_name = os.fsdecode(folder)
+        print("Path:", folder_name)
+        dir = os.fsencode(os.path.join(data_folder_name, folder_name))
+        for file in os.listdir(dir):
+            file_name = os.fsdecode(file)
+            if file_name.endswith(".json") or file_name.endswith(".csv"): 
+                print("Uploading", file_name)
+                #full_name = os.path.join(folder_name, file_name)
+                #response = s3_client.upload_file(full_name, bucket_name, f'staging/{file_name}')
+                response = upload_file(s3_client, bucket_name, data_folder_name, folder_name, file_name)
+                if response is not None:
+                    print("HTTPStatusCode:", response['ResponseMetadata']['HTTPStatusCode'])
     
     # Delete data/loaded folder 
     print("Deleting temp folder")
