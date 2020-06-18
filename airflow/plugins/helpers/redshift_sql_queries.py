@@ -12,6 +12,6 @@ class RedshiftSqlQueries:
             abstract varchar(4000),
             reportno varchar(256),
             categories varchar(256),
-            versions varchar(256),
+            versions varchar(256)
         );
     """

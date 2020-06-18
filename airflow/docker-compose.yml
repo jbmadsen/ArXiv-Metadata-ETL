@@ -27,6 +27,7 @@ services:
       - LOAD_EX=n
       - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - EXECUTOR=Local
+      - AIRFLOW__CORE__FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       #- AIRFLOW__CORE__EXECUTOR=LocalExecutor
       #- AIRFLOW__WEBSERVER__AUTHENTICATE=True
       #- AIRFLOW__WEBSERVER__AUTH_BACKEND=airflow.contrib.auth.backends.password_auth
@@ -38,7 +39,6 @@ services:
     volumes:
       - ./:/usr/local/airflow
       - ./requirements.txt:/requirements.txt
-      #- ./airflow.cfg:/airflow.cfg
     ports:
       - "8080:8080"
     command: webserver
