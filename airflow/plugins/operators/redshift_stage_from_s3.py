@@ -59,7 +59,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         self.log.info("Clearing data from destination table")
         redshift.run(f"TRUNCATE TABLE {self.table};")
         
-        self.log.info("Copying {self.table} from S3 to Redshift")
+        self.log.info(f"Copying data to {self.table} from S3 to Redshift")
         s3_path = f"s3://{self.s3_bucket}/{self.s3_key.format(**context)}"
 
         formatted_sql = self.copy_sql.format(   
@@ -72,4 +72,4 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         )
         redshift.run(formatted_sql)
 
-        self.log.info(f"Completed copying {self.table} from S3 to Redshift")
+        self.log.info(f"Completed copying data to {self.table} from S3 to Redshift")
