@@ -13,14 +13,26 @@ def create_connection(config):
     conn = Connection(
             conn_id = config['conn_id'],
             conn_type = config['conn_type'],
-            host = config['host'],
-            schema = config['schema'],
+            #host = config['host'],
+            #schema = config['schema'],
             login = config['login'],
             password = config['password'],
-            port = config['port'],
-            extra = json.dumps(config['extra'])
+            #port = config['port'],
+            #extra = json.dumps(config['extra'])
     ) 
 
+    if config['host'] is not None:
+        conn.host = config['host']
+
+    if config['schema'] is not None:
+        conn.schema = config['schema']
+
+    if config['port'] is not None:
+        conn.port = config['port']
+    
+    if config['extra'] is not None:
+        conn.extra = json.dumps(config['extra'])
+    
     connection = Session.query(Connection).filter_by(conn_id=conn.conn_id).first()
     if connection is None:
         # Add connection object to session, and commit
@@ -58,11 +70,11 @@ if __name__ == "__main__":
     connections.append(
         {
             'conn_id': 'redshift',
-            'conn_type': 'Postgres',
+            'conn_type': 'postgres',
             'host': config['CLUSTER']['DB_HOST'],
             'schema': config['CLUSTER']['DB_NAME'],
             'login': config['CLUSTER']['DB_USER'],
-            'password': config['CLUSTER']['DB_USER'],
+            'password': config['CLUSTER']['DB_PASSWORD'],
             'port': config['CLUSTER']['DB_PORT'],
             'extra': None,
         }
