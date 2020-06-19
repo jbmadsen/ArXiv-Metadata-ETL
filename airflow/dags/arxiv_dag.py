@@ -5,6 +5,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators import (RedshiftExecuteSQLOperator,
                                StageFromS3ToRedshiftOperator,
                                DataQualityOperator)
+from helpers import RedshiftSqlQueries
 
 
 # Default arguments for DAG with arguments as specified by Project Specification
@@ -52,7 +53,10 @@ start_operator.doc_md = """
 
 create_staging_tables_redshift = RedshiftExecuteSQLOperator(
     task_id='create_staging_tables',
-    dag=dag
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id="redshift",
+    sql_query=RedshiftSqlQueries.create_staging_tables
 )
 create_staging_tables_redshift.doc_md = """
 #Dummy operator
@@ -60,145 +64,161 @@ create_staging_tables_redshift.doc_md = """
 
 stage_metadata_to_redshift = StageFromS3ToRedshiftOperator(
     task_id='stage_metadata',
-    dag=dag
+    dag=dag,
+    provide_context=True,
+    table="public.staging_metadata",
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    s3_bucket="arxiv-etl",
+    s3_key="staging/metadata",
+    region="us-east-1",
+    json="auto"
 )
 stage_metadata_to_redshift.doc_md = """
 #Dummy operator
 """
 
-stage_authors_to_redshift = StageFromS3ToRedshiftOperator(
-    task_id='stage_authors',
-    dag=dag
-)
-stage_authors_to_redshift.doc_md = """
-#Dummy operator
-"""
+# stage_authors_to_redshift = StageFromS3ToRedshiftOperator(
+#     task_id='stage_authors',
+#     dag=dag,
+#     provide_context=True,
+#     table="staging_authors",
+#     redshift_conn_id="redshift",
+#     aws_credentials_id="aws_credentials",
+#     s3_bucket="arxiv-etl",
+#     s3_key="staging/authors",
+#     region="us-east-1",
+#     json="auto"
+# )
+# stage_authors_to_redshift.doc_md = """
+# #Dummy operator
+# """
 
-stage_citations_to_redshift = StageFromS3ToRedshiftOperator(
-    task_id='stage_citations',
-    dag=dag
-)
-stage_citations_to_redshift.doc_md = """
-#Dummy operator
-"""
+# stage_citations_to_redshift = StageFromS3ToRedshiftOperator(
+#     task_id='stage_citations',
+#     dag=dag
+# )
+# stage_citations_to_redshift.doc_md = """
+# #Dummy operator
+# """
 
-stage_classifications_to_redshift = StageFromS3ToRedshiftOperator(
-    task_id='stage_classifications',
-    dag=dag
-)
-stage_classifications_to_redshift.doc_md = """
-#Dummy operator
-"""
+# stage_classifications_to_redshift = StageFromS3ToRedshiftOperator(
+#     task_id='stage_classifications',
+#     dag=dag
+# )
+# stage_classifications_to_redshift.doc_md = """
+# #Dummy operator
+# """
 
-create_main_tables_redshift = RedshiftExecuteSQLOperator(
-    task_id='create_main_tables',
-    dag=dag
-)
-create_main_tables_redshift.doc_md = """
-#Dummy operator
-"""
+# create_main_tables_redshift = RedshiftExecuteSQLOperator(
+#     task_id='create_main_tables',
+#     dag=dag
+# )
+# create_main_tables_redshift.doc_md = """
+# #Dummy operator
+# """
 
-load_articles_table = RedshiftExecuteSQLOperator(
-    task_id='load_articles_fact_table',
-    dag=dag, 
-    provide_context=True
-)
-load_articles_table.doc_md = """
-#Dummy operator
-"""
+# load_articles_table = RedshiftExecuteSQLOperator(
+#     task_id='load_articles_fact_table',
+#     dag=dag, 
+#     provide_context=True
+# )
+# load_articles_table.doc_md = """
+# #Dummy operator
+# """
 
-load_article_version_dimension_table = RedshiftExecuteSQLOperator(
-    task_id='load_article_version_dim_table',
-    dag=dag
-)
-load_article_version_dimension_table.doc_md = """
-#Dummy operator
-"""
+# load_article_version_dimension_table = RedshiftExecuteSQLOperator(
+#     task_id='load_article_version_dim_table',
+#     dag=dag
+# )
+# load_article_version_dimension_table.doc_md = """
+# #Dummy operator
+# """
 
-load_article_categories_dimension_table = RedshiftExecuteSQLOperator(
-    task_id='load_article_categories_dim_table',
-    dag=dag
-)
-load_article_categories_dimension_table.doc_md = """
-#Dummy operator
-"""
+# load_article_categories_dimension_table = RedshiftExecuteSQLOperator(
+#     task_id='load_article_categories_dim_table',
+#     dag=dag
+# )
+# load_article_categories_dimension_table.doc_md = """
+# #Dummy operator
+# """
 
-load_article_authors_dimension_table = RedshiftExecuteSQLOperator(
-    task_id='load_authors_dim_table',
-    dag=dag
-)
-load_article_authors_dimension_table.doc_md = """
-#Dummy operator
-"""
+# load_article_authors_dimension_table = RedshiftExecuteSQLOperator(
+#     task_id='load_authors_dim_table',
+#     dag=dag
+# )
+# load_article_authors_dimension_table.doc_md = """
+# #Dummy operator
+# """
 
-load_article_authors_bridge_table = RedshiftExecuteSQLOperator(
-    task_id='load_article_authors_bridge_table',
-    dag=dag
-)
-load_article_authors_bridge_table.doc_md = """
-#Dummy operator
-"""
+# load_article_authors_bridge_table = RedshiftExecuteSQLOperator(
+#     task_id='load_article_authors_bridge_table',
+#     dag=dag
+# )
+# load_article_authors_bridge_table.doc_md = """
+# #Dummy operator
+# """
 
-load_article_citations_dimension_table = RedshiftExecuteSQLOperator(
-    task_id='load_article_citations_dim_table',
-    dag=dag
-)
-load_article_citations_dimension_table.doc_md = """
-#Dummy operator
-"""
+# load_article_citations_dimension_table = RedshiftExecuteSQLOperator(
+#     task_id='load_article_citations_dim_table',
+#     dag=dag
+# )
+# load_article_citations_dimension_table.doc_md = """
+# #Dummy operator
+# """
 
-load_article_classifications_dimension_table = RedshiftExecuteSQLOperator(
-    task_id='load_article_classifications_dim_table',
-    dag=dag
-)
-load_article_classifications_dimension_table.doc_md = """
-#Dummy operator
-"""
+# load_article_classifications_dimension_table = RedshiftExecuteSQLOperator(
+#     task_id='load_article_classifications_dim_table',
+#     dag=dag
+# )
+# load_article_classifications_dimension_table.doc_md = """
+# #Dummy operator
+# """
 
-load_classifications_dimension_table = RedshiftExecuteSQLOperator(
-    task_id='load_classifications_dim_table',
-    dag=dag
-)
-load_classifications_dimension_table.doc_md = """
-#Dummy operator
-"""
+# load_classifications_dimension_table = RedshiftExecuteSQLOperator(
+#     task_id='load_classifications_dim_table',
+#     dag=dag
+# )
+# load_classifications_dimension_table.doc_md = """
+# #Dummy operator
+# """
 
-run_quality_checks = DataQualityOperator(
-    task_id='run_quality_checks',
-    dag=dag
-)
-run_quality_checks.doc_md = """
-#Dummy operator
-"""
+# run_quality_checks = DataQualityOperator(
+#     task_id='run_quality_checks',
+#     dag=dag
+# )
+# run_quality_checks.doc_md = """
+# #Dummy operator
+# """
 
-end_operator = DummyOperator(
-    task_id='Stop_execution',  
-    dag=dag
-)
-end_operator.doc_md = """
-#Dummy operator
-"""
+# end_operator = DummyOperator(
+#     task_id='Stop_execution',  
+#     dag=dag
+# )
+# end_operator.doc_md = """
+# #Dummy operator
+# """
 
 
 # Task Dependencies
 
-start_operator >> create_staging_tables_redshift
+start_operator >> create_staging_tables_redshift >> stage_metadata_to_redshift
 
-create_staging_tables_redshift >> [stage_metadata_to_redshift, 
-                                   stage_authors_to_redshift,
-                                   stage_citations_to_redshift, 
-                                   stage_classifications_to_redshift] >> create_main_tables_redshift
+# create_staging_tables_redshift >> [stage_metadata_to_redshift, 
+#                                    stage_authors_to_redshift,
+#                                    stage_citations_to_redshift, 
+#                                    stage_classifications_to_redshift] >> create_main_tables_redshift
 
-create_main_tables_redshift >> load_articles_table
+# create_main_tables_redshift >> load_articles_table
 
-load_articles_table >> [load_article_version_dimension_table, 
-                        load_article_categories_dimension_table, 
-                        load_article_authors_dimension_table,
-                        load_article_authors_bridge_table,
-                        load_article_citations_dimension_table,
-                        load_article_classifications_dimension_table,
-                        load_classifications_dimension_table] >> run_quality_checks
+# load_articles_table >> [load_article_version_dimension_table, 
+#                         load_article_categories_dimension_table, 
+#                         load_article_authors_dimension_table,
+#                         load_article_authors_bridge_table,
+#                         load_article_citations_dimension_table,
+#                         load_article_classifications_dimension_table,
+#                         load_classifications_dimension_table] >> run_quality_checks
 
-run_quality_checks >> end_operator
-    
+# run_quality_checks >> end_operator
+
 # End
