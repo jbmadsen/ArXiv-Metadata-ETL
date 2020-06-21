@@ -16,9 +16,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         SECRET_ACCESS_KEY '{}'
         REGION '{}'
         DELIMITER ','
-        TRUNCATECOLUMNS 
-        BLANKSASNULL
-        EMPTYASNULL;
+        CSV;
     """
 
     copy_json_sql = """

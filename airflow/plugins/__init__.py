@@ -14,5 +14,6 @@ class UdacityPlugin(AirflowPlugin):
         operators.DataQualityOperator
     ]
     helpers = [
-        helpers.RedshiftSqlQueries
+        helpers.RedshiftSqlQueries,
+        helpers.PythonETLToRedshift
     ]
