@@ -9,7 +9,19 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
 
     ui_color = '#358140'
 
-    copy_sql = """
+    copy_csv_sql = """
+        COPY {}
+        FROM '{}'
+        ACCESS_KEY_ID '{}'
+        SECRET_ACCESS_KEY '{}'
+        REGION '{}'
+        DELIMITER ','
+        TRUNCATECOLUMNS 
+        BLANKSASNULL
+        EMPTYASNULL;
+    """
+
+    copy_json_sql = """
         COPY {}
         FROM '{}'
         ACCESS_KEY_ID '{}'
@@ -29,7 +41,8 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
                  s3_key="",
                  table="",
                  region="",
-                 json="",
+                 json_format="",
+                 file_type="json",
                  *args, **kwargs):
         super(StageFromS3ToRedshiftOperator, self).__init__(*args, **kwargs)
         # Parameter mappings
@@ -39,7 +52,8 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         self.s3_key = s3_key
         self.table = table
         self.region = region
-        self.json = json
+        self.json_format = json_format
+        self.file_type = file_type
         #self.execution_date = kwargs.get('execution_date')
 
 
@@ -62,14 +76,42 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         self.log.info(f"Copying data to {self.table} from S3 to Redshift")
         s3_path = f"s3://{self.s3_bucket}/{self.s3_key.format(**context)}"
 
-        formatted_sql = self.copy_sql.format(   
-            self.table,
-            s3_path,
-            credentials.access_key,
-            credentials.secret_key,
-            self.region,
-            self.json
-        )
+        formatted_sql = self.get_sql(self.file_type, s3_path, credentials)
         redshift.run(formatted_sql)
 
         self.log.info(f"Completed copying data to {self.table} from S3 to Redshift")
+
+
+    def get_sql(self, file_type, s3_path, credentials): 
+        """
+        Gets the correct SQL for the 
+
+        Args:
+            file_type (string): json, csv supported
+
+        Returns:
+            string: COPY SQL for the selected file_type 
+        """
+        switcher = { 
+            "json": self.copy_json_sql.format(   
+                self.table,
+                s3_path,
+                credentials.access_key,
+                credentials.secret_key,
+                self.region,
+                self.json_format
+            ), 
+            "csv": self.copy_csv_sql.format(   
+                self.table,
+                s3_path,
+                credentials.access_key,
+                credentials.secret_key,
+                self.region
+            ), 
+        } 
+    
+        # get() method of dictionary data type returns  
+        # value of passed argument if it is present  
+        # in dictionary otherwise second argument will 
+        # be assigned as default value of passed argument 
+        return switcher.get(file_type, "json") # json default 

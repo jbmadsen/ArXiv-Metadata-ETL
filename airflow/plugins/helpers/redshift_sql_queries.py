@@ -14,4 +14,22 @@ class RedshiftSqlQueries:
             categories varchar(256),
             versions varchar(256)
         );
+
+        DROP TABLE IF EXISTS public.staging_authors;
+        CREATE TABLE IF NOT EXISTS public.staging_authors (
+            journal_id varchar(256),
+            authors_list varchar(256)
+        );
+
+        DROP TABLE IF EXISTS public.staging_citations;
+        CREATE TABLE IF NOT EXISTS public.staging_citations (
+            citation_id varchar(256),
+            citation_list varchar(256)
+        );
+
+        DROP TABLE IF EXISTS public.staging_classifications;
+        CREATE TABLE IF NOT EXISTS public.staging_classifications (
+            tag_id varchar(256),
+            tag_name varchar(256)
+        );
     """

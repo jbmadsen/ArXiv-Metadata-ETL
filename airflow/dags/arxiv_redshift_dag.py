@@ -25,7 +25,7 @@ default_args = {
 # Scheduler: https://airflow.apache.org/docs/stable/scheduler.html
 
 dag = DAG(
-    'arXiv_dag',
+    'arXiv_Redshift_dag',
     default_args=default_args,
     description='Load and transform data from S3 in Redshift with Airflow',
     schedule_interval='@once', 
@@ -72,43 +72,62 @@ stage_metadata_to_redshift = StageFromS3ToRedshiftOperator(
     s3_bucket="arxiv-etl",
     s3_key="staging/metadata",
     region="us-east-1",
-    json="auto"
+    json_format="auto",
+    file_type="json"
 )
 stage_metadata_to_redshift.doc_md = """
 #Dummy operator
 """
 
-# stage_authors_to_redshift = StageFromS3ToRedshiftOperator(
-#     task_id='stage_authors',
-#     dag=dag,
-#     provide_context=True,
-#     table="staging_authors",
-#     redshift_conn_id="redshift",
-#     aws_credentials_id="aws_credentials",
-#     s3_bucket="arxiv-etl",
-#     s3_key="staging/authors",
-#     region="us-east-1",
-#     json="auto"
-# )
-# stage_authors_to_redshift.doc_md = """
-# #Dummy operator
-# """
+stage_authors_to_redshift = StageFromS3ToRedshiftOperator(
+    task_id='stage_authors',
+    dag=dag,
+    provide_context=True,
+    table="public.staging_authors",
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    s3_bucket="arxiv-etl",
+    s3_key="staging/authors",
+    region="us-east-1",
+    json_format="auto",
+    file_type="json"
+)
+stage_authors_to_redshift.doc_md = """
+#Dummy operator
+"""
 
-# stage_citations_to_redshift = StageFromS3ToRedshiftOperator(
-#     task_id='stage_citations',
-#     dag=dag
-# )
-# stage_citations_to_redshift.doc_md = """
-# #Dummy operator
-# """
+stage_citations_to_redshift = StageFromS3ToRedshiftOperator(
+    task_id='stage_citations',
+    dag=dag,
+    provide_context=True,
+    table="public.staging_citations",
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    s3_bucket="arxiv-etl",
+    s3_key="staging/citations",
+    region="us-east-1",
+    json_format="auto",
+    file_type="json"
+)
+stage_citations_to_redshift.doc_md = """
+#Dummy operator
+"""
 
-# stage_classifications_to_redshift = StageFromS3ToRedshiftOperator(
-#     task_id='stage_classifications',
-#     dag=dag
-# )
-# stage_classifications_to_redshift.doc_md = """
-# #Dummy operator
-# """
+stage_classifications_to_redshift = StageFromS3ToRedshiftOperator(
+    task_id='stage_classifications',
+    dag=dag,
+    provide_context=True,
+    table="public.staging_classifications",
+    redshift_conn_id="redshift",
+    aws_credentials_id="aws_credentials",
+    s3_bucket="arxiv-etl",
+    s3_key="staging/classifications",
+    region="us-east-1",
+    file_type="csv"
+)
+stage_classifications_to_redshift.doc_md = """
+#Dummy operator
+"""
 
 # create_main_tables_redshift = RedshiftExecuteSQLOperator(
 #     task_id='create_main_tables',
@@ -202,12 +221,12 @@ stage_metadata_to_redshift.doc_md = """
 
 # Task Dependencies
 
-start_operator >> create_staging_tables_redshift >> stage_metadata_to_redshift
+start_operator >> create_staging_tables_redshift
 
-# create_staging_tables_redshift >> [stage_metadata_to_redshift, 
-#                                    stage_authors_to_redshift,
-#                                    stage_citations_to_redshift, 
-#                                    stage_classifications_to_redshift] >> create_main_tables_redshift
+create_staging_tables_redshift >> [stage_metadata_to_redshift, 
+                                   stage_authors_to_redshift,
+                                   stage_citations_to_redshift, 
+                                   stage_classifications_to_redshift] # >> create_main_tables_redshift
 
 # create_main_tables_redshift >> load_articles_table
 
