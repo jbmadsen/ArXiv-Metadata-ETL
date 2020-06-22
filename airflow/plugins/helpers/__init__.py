@@ -1,7 +1,9 @@
 from helpers.redshift_sql_queries import RedshiftSqlQueries
-from helpers.python_etl_to_redshift import PythonETLToRedshift
+from helpers.redshift_etl.authors import load_authors
+from helpers.redshift_etl.citations import load_citations
 
 __all__ = [
     'RedshiftSqlQueries',
-    'PythonETLToRedshift'
+    'load_authors',
+    'load_citations',
 ]

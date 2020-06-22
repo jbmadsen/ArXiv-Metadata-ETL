@@ -15,5 +15,6 @@ class UdacityPlugin(AirflowPlugin):
     ]
     helpers = [
         helpers.RedshiftSqlQueries,
-        helpers.PythonETLToRedshift
+        helpers.load_authors,
+        helpers.load_citations,
     ]

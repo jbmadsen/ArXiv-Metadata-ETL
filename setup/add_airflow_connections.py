@@ -15,11 +15,17 @@ def create_connection(config):
             conn_type = config['conn_type'],
             #host = config['host'],
             #schema = config['schema'],
-            login = config['login'],
-            password = config['password'],
+            #login = config['login'],
+            #password = config['password'],
             #port = config['port'],
             #extra = json.dumps(config['extra'])
     ) 
+
+    if config['login'] is not None:
+        conn.login = config['login']
+
+    if config['password'] is not None:
+        conn.password = config['password']
 
     if config['host'] is not None:
         conn.host = config['host']
@@ -64,6 +70,19 @@ if __name__ == "__main__":
             'password': config['AWS']['SECRET'],
             'port': None,
             'extra': None,
+        }
+    )
+
+    connections.append(
+        {
+            'conn_id': 's3_credentials',
+            'conn_type': 's3',
+            'host': None,
+            'schema': None,
+            'login': None,
+            'password': None,
+            'port': None,
+            'extra': { "aws_access_key_id": config['AWS']['KEY'], "aws_secret_access_key": config['AWS']['SECRET'] }
         }
     )
 

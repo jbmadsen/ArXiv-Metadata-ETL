@@ -2,7 +2,7 @@ class RedshiftSqlQueries:
     create_staging_tables = """
         DROP TABLE IF EXISTS public.staging_metadata;
         CREATE TABLE IF NOT EXISTS public.staging_metadata (
-            id varchar(256),
+            metadata_id varchar(256),
             submitter varchar(256),
             authors varchar(256),
             title varchar(256),
@@ -17,8 +17,8 @@ class RedshiftSqlQueries:
 
         DROP TABLE IF EXISTS public.staging_authors;
         CREATE TABLE IF NOT EXISTS public.staging_authors (
-            journal_id varchar(256),
-            authors_list varchar(256)
+            metadata_id varchar(256),
+            author varchar(256)
         );
 
         DROP TABLE IF EXISTS public.staging_citations;
