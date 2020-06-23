@@ -1,0 +1,61 @@
+//// -- LEVEL 1
+//// -- Tables and References
+
+// Creating tables
+Table AuthorsDim {
+  id int [pk, increment] // auto-increment
+  article_id int
+  metadata_id varchar
+  author_name varchar
+}
+
+Table CitationsDim {
+  id int [pk, increment] // auto-increment
+  article_from_id int
+  article_to_id int
+  citation_from varchar
+  citation_to varchar
+}
+ 
+Table ClassificationsDim {
+  id int [pk, increment] // auto-increment
+  article_id int
+  tag_id varchar
+  tag_name varchar
+}
+
+Table ArticleFact {
+  article_id int [pk, increment] // auto-increment
+  submitter_name varchar
+  // authors varchar // fix
+  title varchar
+  comments varchar
+  journalref varchar
+  doi varchar
+  abstract varchar
+  reportno varchar
+  classifications varchar // fix
+  versions varchar
+}
+
+Table VersionsDim {
+  id int [pk, increment] // auto-increment
+  article_id int
+  version varchar
+}
+
+// Creating references
+// You can also define relaionship separately
+// > many-to-one; < one-to-many; - one-to-one
+//Ref: U.country_code > countries.code  
+//Ref: merchants.country_code > countries.code
+
+Ref: ArticleFact.article_id > VersionsDim.article_id
+Ref: ArticleFact.article_id > ClassificationsDim.article_id
+Ref: ArticleFact.article_id > AuthorsDim.article_id
+
+Ref: ArticleFact.article_id > CitationsDim.article_from_id
+Ref: ArticleFact.article_id > CitationsDim.article_to_id
+
+
+//----------------------------------------------//
