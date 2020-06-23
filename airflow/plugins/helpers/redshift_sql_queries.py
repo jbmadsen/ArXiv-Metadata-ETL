@@ -1,4 +1,5 @@
 class RedshiftSqlQueries:
+
     create_staging_tables = """
         DROP TABLE IF EXISTS staging.metadata;
         CREATE TABLE IF NOT EXISTS staging.metadata (
@@ -33,7 +34,6 @@ class RedshiftSqlQueries:
             tag_name varchar(256)
         );
     """
-
 
     create_main_tables = """
         DROP TABLE IF EXISTS public.articles_fact;
