@@ -23,8 +23,8 @@ class RedshiftSqlQueries:
 
         DROP TABLE IF EXISTS public.staging_citations;
         CREATE TABLE IF NOT EXISTS public.staging_citations (
-            citation_id varchar(256),
-            citation_list varchar(256)
+            metadata_id varchar(256),
+            citation varchar(256)
         );
 
         DROP TABLE IF EXISTS public.staging_classifications;

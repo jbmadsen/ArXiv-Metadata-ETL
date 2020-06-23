@@ -4,8 +4,8 @@ import json
 import pandas as pd
 from airflow import AirflowException
 from airflow.hooks.S3_hook import S3Hook
-from airflow.hooks.postgres_hook import PostgresHook
-from airflow.contrib.hooks.aws_hook import AwsHook
+#from airflow.hooks.postgres_hook import PostgresHook
+#from airflow.contrib.hooks.aws_hook import AwsHook
 
 
 def load_authors(aws_credentials_id, redshift_connection_id, s3_credentials_id, region, bucket, file_name, **kwargs):
@@ -49,33 +49,33 @@ def load_authors(aws_credentials_id, redshift_connection_id, s3_credentials_id, 
     logging.info("Deleting DataFrame from disk")
     os.remove(save_file_name)
 
-    logging.info("Getting AWS hooks")
-    aws_hook = AwsHook(aws_credentials_id)
+    # logging.info("Getting AWS hooks")
+    # aws_hook = AwsHook(aws_credentials_id)
 
-    logging.info("Loading AWS credentials")
-    credentials = aws_hook.get_credentials()
+    # logging.info("Loading AWS credentials")
+    # credentials = aws_hook.get_credentials()
 
-    logging.info("Getting Redshift hook")
-    redshift = PostgresHook(postgres_conn_id=redshift_connection_id)
+    # logging.info("Getting Redshift hook")
+    # redshift = PostgresHook(postgres_conn_id=redshift_connection_id)
 
-    logging.info("Creating Redshift query")
-    copy_query= """
-        COPY public.staging_authors
-        FROM '{}'
-        ACCESS_KEY_ID '{}'
-        SECRET_ACCESS_KEY '{}'
-        REGION '{}'
-        DELIMITER ','
-        CSV;
-    """.format(
-        f"s3://{bucket}/{s3_file_name}",
-        credentials.access_key,
-        credentials.secret_key,
-        region
-    )   
+    # logging.info("Creating Redshift query")
+    # copy_query= """
+    #     COPY public.staging_authors
+    #     FROM '{}'
+    #     ACCESS_KEY_ID '{}'
+    #     SECRET_ACCESS_KEY '{}'
+    #     REGION '{}'
+    #     DELIMITER ','
+    #     CSV;
+    # """.format(
+    #     f"s3://{bucket}/{s3_file_name}",
+    #     credentials.access_key,
+    #     credentials.secret_key,
+    #     region
+    # )   
 
-    logging.info("Executing Redshift query: Copying from S3")
-    redshift.run(copy_query)
+    # logging.info("Executing Redshift query: Copying from S3")
+    # redshift.run(copy_query)
 
     logging.info("Done")
     return True
