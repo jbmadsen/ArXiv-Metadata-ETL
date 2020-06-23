@@ -165,21 +165,16 @@ stage_classifications_to_redshift.doc_md = """
 #Dummy operator
 """
 
-create_main_tables_redshift = DummyOperator(
+create_main_tables_redshift = RedshiftExecuteSQLOperator(
     task_id='create_main_tables',
-    dag=dag
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id="redshift",
+    sql_query=helpers.RedshiftSqlQueries.create_main_tables
 )
 create_main_tables_redshift.doc_md = """
 #Dummy operator
 """
-
-# create_main_tables_redshift = RedshiftExecuteSQLOperator(
-#     task_id='create_main_tables',
-#     dag=dag
-# )
-# create_main_tables_redshift.doc_md = """
-# #Dummy operator
-# """
 
 # load_articles_table = RedshiftExecuteSQLOperator(
 #     task_id='load_articles_fact_table',
