@@ -1,7 +1,7 @@
 class RedshiftSqlQueries:
     create_staging_tables = """
-        DROP TABLE IF EXISTS public.staging_metadata;
-        CREATE TABLE IF NOT EXISTS public.staging_metadata (
+        DROP TABLE IF EXISTS staging.metadata;
+        CREATE TABLE IF NOT EXISTS staging.metadata (
             metadata_id varchar(256),
             submitter varchar(256),
             authors varchar(256),
@@ -15,20 +15,20 @@ class RedshiftSqlQueries:
             versions varchar(256)
         );
 
-        DROP TABLE IF EXISTS public.staging_authors;
-        CREATE TABLE IF NOT EXISTS public.staging_authors (
+        DROP TABLE IF EXISTS staging.authors;
+        CREATE TABLE IF NOT EXISTS staging.authors (
             metadata_id varchar(256),
             author varchar(256)
         );
 
-        DROP TABLE IF EXISTS public.staging_citations;
-        CREATE TABLE IF NOT EXISTS public.staging_citations (
+        DROP TABLE IF EXISTS staging.citations;
+        CREATE TABLE IF NOT EXISTS staging.citations (
             metadata_id varchar(256),
             citation varchar(256)
         );
 
-        DROP TABLE IF EXISTS public.staging_classifications;
-        CREATE TABLE IF NOT EXISTS public.staging_classifications (
+        DROP TABLE IF EXISTS staging.classifications;
+        CREATE TABLE IF NOT EXISTS staging.classifications (
             tag_id varchar(256),
             tag_name varchar(256)
         );
