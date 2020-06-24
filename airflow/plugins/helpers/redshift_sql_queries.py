@@ -1,6 +1,8 @@
 class RedshiftSqlQueries:
 
     create_staging_tables = """
+        CREATE SCHEMA IF NOT EXISTS STAGING;
+
         DROP TABLE IF EXISTS staging.metadata;
         CREATE TABLE IF NOT EXISTS staging.metadata (
             metadata_id varchar(256),
