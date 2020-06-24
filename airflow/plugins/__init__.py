@@ -11,6 +11,7 @@ class UdacityPlugin(AirflowPlugin):
     operators = [
         operators.StageFromS3ToRedshiftOperator,
         operators.RedshiftExecuteSQLOperator,
+        operators.LoadRedshiftTableOperator,
         operators.DataQualityOperator
     ]
     helpers = [

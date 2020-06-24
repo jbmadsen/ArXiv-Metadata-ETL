@@ -6,6 +6,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator 
 from airflow.operators import (RedshiftExecuteSQLOperator,
                                StageFromS3ToRedshiftOperator,
+                               LoadRedshiftTableOperator,
                                DataQualityOperator)
 
 
@@ -176,14 +177,19 @@ create_main_tables_redshift.doc_md = """
 #Dummy operator
 """
 
-# load_articles_table = RedshiftExecuteSQLOperator(
-#     task_id='load_articles_fact_table',
-#     dag=dag, 
-#     provide_context=True
-# )
-# load_articles_table.doc_md = """
-# #Dummy operator
-# """
+load_articles_table = LoadRedshiftTableOperator(
+    task_id='load_articles_fact_table',
+    dag=dag, 
+    provide_context=True,
+    truncate_table=True,
+    aws_credentials_id="aws_credentials",
+    redshift_conn_id='redshift',
+    table="public.articles_fact",
+    sql_query=helpers.RedshiftSqlQueries.insert_articles_fact
+)
+load_articles_table.doc_md = """
+#Dummy operator
+"""
 
 # load_article_version_dimension_table = RedshiftExecuteSQLOperator(
 #     task_id='load_article_version_dim_table',
@@ -269,7 +275,7 @@ create_staging_tables_redshift >> [stage_metadata_to_redshift,
                                    re_parse_citations_data >> stage_citations_to_redshift,
                                    stage_classifications_to_redshift] >> create_main_tables_redshift
 
-# create_main_tables_redshift >> load_articles_table
+create_main_tables_redshift >> load_articles_table
 
 # load_articles_table >> [load_article_version_dimension_table, 
 #                         load_article_categories_dimension_table, 
