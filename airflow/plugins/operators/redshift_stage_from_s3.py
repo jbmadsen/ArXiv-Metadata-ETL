@@ -10,7 +10,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
     ui_color = '#358140'
 
     copy_csv_sql = """
-        COPY {}
+        COPY {} {}
         FROM '{}'
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
@@ -20,7 +20,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
     """
 
     copy_json_sql = """
-        COPY {}
+        COPY {} {}
         FROM '{}'
         ACCESS_KEY_ID '{}'
         SECRET_ACCESS_KEY '{}'
@@ -41,6 +41,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
                  region="",
                  json_format="",
                  file_type="json",
+                 column_names="",
                  *args, **kwargs):
         super(StageFromS3ToRedshiftOperator, self).__init__(*args, **kwargs)
         # Parameter mappings
@@ -52,6 +53,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         self.region = region
         self.json_format = json_format
         self.file_type = file_type
+        self.column_names = column_names
         #self.execution_date = kwargs.get('execution_date')
 
 
@@ -93,6 +95,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
         switcher = { 
             "json": self.copy_json_sql.format(   
                 self.table,
+                self.column_names,
                 s3_path,
                 credentials.access_key,
                 credentials.secret_key,
@@ -101,6 +104,7 @@ class StageFromS3ToRedshiftOperator(BaseOperator):
             ), 
             "csv": self.copy_csv_sql.format(   
                 self.table,
+                self.column_names,
                 s3_path,
                 credentials.access_key,
                 credentials.secret_key,

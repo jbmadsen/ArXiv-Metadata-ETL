@@ -5,15 +5,15 @@ class RedshiftSqlQueries:
 
         DROP TABLE IF EXISTS staging.metadata;
         CREATE TABLE IF NOT EXISTS staging.metadata (
-            metadata_id VARCHAR(256),
+            id VARCHAR(256),
             submitter VARCHAR(256),
             authors VARCHAR(256),
             title VARCHAR(256),
             comments VARCHAR(256),
-            journalref VARCHAR(256),
+            "journal-ref" VARCHAR(256),
             doi VARCHAR(256),
             abstract VARCHAR(4000),
-            reportno VARCHAR(256),
+            "report-no" VARCHAR(256),
             categories VARCHAR(256),
             versions VARCHAR(256)
         );
