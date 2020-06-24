@@ -1,5 +1,5 @@
 # Custom
-data/subject-classifications.csv
+data/loading/*
 data/arxiv.zip
 
 # Airflow
