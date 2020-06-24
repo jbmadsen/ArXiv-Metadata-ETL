@@ -17,7 +17,7 @@ default_args = {
     'start_date': datetime(2020, 6, 1),
     'depends_on_past': False,
     'retries': 3,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=2),
     'catchup': False,
     'email_on_retry': False
 }
