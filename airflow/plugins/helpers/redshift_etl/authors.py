@@ -40,6 +40,11 @@ def load_authors(aws_credentials_id, redshift_connection_id, s3_credentials_id, 
     
     logging.info("Saving DataFrame to disk")
     save_file_name = 'authors_parsed.csv'
+
+    if os.path.exists(file_name):
+        # Delete before saving if exists
+        os.remove(save_file_name)
+    
     authors_df.to_csv(save_file_name, index=False)
 
     logging.info("Copying file to S3")

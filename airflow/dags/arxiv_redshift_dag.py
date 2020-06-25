@@ -75,7 +75,7 @@ stage_metadata_to_redshift = StageFromS3ToRedshiftOperator(
     s3_key="staging/metadata",
     region="us-east-1",
     json_format="auto",
-    file_type="json"
+    file_type="json",
 )
 stage_metadata_to_redshift.doc_md = """
 #Dummy operator
@@ -267,15 +267,20 @@ load_articles_table.doc_md = """
 # Task Dependencies
 
 start_operator >> [create_staging_tables_redshift,
+                   create_main_tables_redshift,
                    re_parse_authors_data,
                    re_parse_citations_data]
 
 create_staging_tables_redshift >> [stage_metadata_to_redshift,
                                    re_parse_authors_data >> stage_authors_to_redshift,
                                    re_parse_citations_data >> stage_citations_to_redshift,
-                                   stage_classifications_to_redshift] >> create_main_tables_redshift
+                                   stage_classifications_to_redshift]
 
-create_main_tables_redshift >> load_articles_table
+[stage_metadata_to_redshift,
+ stage_authors_to_redshift,
+ stage_citations_to_redshift,
+ stage_classifications_to_redshift,
+ create_main_tables_redshift] >> load_articles_table
 
 # load_articles_table >> [load_article_version_dimension_table, 
 #                         load_article_categories_dimension_table, 
