@@ -36,4 +36,8 @@ TODO:
 	Run empty airflow
 	Add connections/variables/users to airflow
 	Load and transform data from S3 into Redshift/Postgres using Airflow
+	Create quality checks for staged and transformed data
+	Deleted/moved unneeded files for the project
+	Updated doc-strings all around
+	Updated this README to reflect project files, setup and execution
 ```
