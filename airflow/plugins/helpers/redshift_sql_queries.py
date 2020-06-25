@@ -9,7 +9,7 @@ class RedshiftSqlQueries:
             submitter VARCHAR(256),
             authors VARCHAR(256),
             title VARCHAR(256),
-            comments VARCHAR(256),
+            comments VARCHAR(512),
             "journal-ref" VARCHAR(256),
             doi VARCHAR(256),
             abstract VARCHAR(4000),
@@ -45,10 +45,10 @@ class RedshiftSqlQueries:
             year VARCHAR(20),
             submitter_name VARCHAR(256),
             title VARCHAR(256),
-            comments VARCHAR(256),
+            comments VARCHAR(512),
             journal_reference VARCHAR(256),
             doi VARCHAR(256),
-            abstract VARCHAR(256),
+            abstract VARCHAR(4000),
             report_number VARCHAR(256),
             classifications VARCHAR(256),
             versions VARCHAR(256)
@@ -57,8 +57,8 @@ class RedshiftSqlQueries:
         DROP TABLE IF EXISTS public.versions_dim;
         CREATE TABLE IF NOT EXISTS public.versions_dim (
             id INT IDENTITY(0,1),
-            article_id INT,
-            author VARCHAR(256)
+            article_id VARCHAR(256),
+            version VARCHAR(256)
         );
 
         DROP TABLE IF EXISTS public.authors_dim;
@@ -87,6 +87,8 @@ class RedshiftSqlQueries:
         );
     """
 
+    # Not pretty, and Redshift does NOT support negative lookbehind/lookahead regex. A better version would have been:
+    # '(?<![0-9-])(19[6-9][0-9])(?![0-9-])|(?<![0-9-])(20[0-9]{2})(?![0-9-])'
     insert_articles_fact = """
         INSERT INTO public.articles_fact (article_id, submitter_name, year, title, comments, journal_reference, doi, abstract, report_number, classifications, versions)
         SELECT DISTINCT
@@ -103,3 +105,45 @@ class RedshiftSqlQueries:
             versions
         FROM staging.metadata
     """
+
+    # Inspiration: https://www.holistics.io/blog/splitting-array-string-into-rows-in-amazon-redshift-or-mysql/
+    insert_versions_dim = """
+        INSERT INTO public.versions_dim (article_id, version)
+        WITH cnt AS (
+            SELECT 1 as n UNION ALL
+            SELECT 2 UNION ALL
+            SELECT 3 UNION ALL
+            SELECT 4 UNION ALL
+            SELECT 5 UNION ALL
+            SELECT 6 UNION ALL
+            SELECT 7 UNION ALL
+            SELECT 8 UNION ALL
+            SELECT 9 UNION ALL
+            SELECT 10 UNION ALL
+            SELECT 11 UNION ALL
+            SELECT 12 UNION ALL
+            SELECT 13 UNION ALL
+            SELECT 14 UNION ALL
+            SELECT 15 UNION ALL
+            SELECT 16 UNION ALL
+            SELECT 17 UNION ALL
+            SELECT 18 UNION ALL
+            SELECT 19 UNION ALL
+            SELECT 20
+        )
+        SELECT DISTINCT
+            md.id AS article_id, 
+            TRIM(SPLIT_PART(REPLACE(REPLACE(REPLACE(md.versions, '[', ''), ']', ''), '"', ''), ',', cnt.n)) AS version
+        FROM cnt
+        INNER JOIN staging.metadata md ON cnt.n <= REGEXP_COUNT(md.versions, ',') + 1
+    """
+
+    insert_authors_dim = """
+    """
+
+    insert_classifications_dim = """
+    """
+
+    insert_citations_dim = """
+    """
+
