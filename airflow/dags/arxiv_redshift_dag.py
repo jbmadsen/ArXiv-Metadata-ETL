@@ -48,11 +48,11 @@ Email: jacob@jbmadsen.com
 ############################
 
 start_operator = DummyOperator(
-    task_id='Begin_execution',  
+    task_id='begin_execution',  
     dag=dag
 )
 start_operator.doc_md = """
-#Dummy operator
+# Dummy operator: Start of DAG
 """
 
 # Create tables
@@ -65,7 +65,8 @@ create_staging_tables_redshift = RedshiftExecuteSQLOperator(
     sql_query=helpers.RedshiftSqlQueries.create_staging_tables
 )
 create_staging_tables_redshift.doc_md = """
-#Dummy operator
+# Creates staging schema if it does not exists, with default parameters.
+# Drops and (re)create all staging tables needed for this DAG.
 """
 
 create_main_tables_redshift = RedshiftExecuteSQLOperator(
@@ -76,7 +77,8 @@ create_main_tables_redshift = RedshiftExecuteSQLOperator(
     sql_query=helpers.RedshiftSqlQueries.create_main_tables
 )
 create_main_tables_redshift.doc_md = """
-#Dummy operator
+# Creates table within existing public schema.
+# Drops and (re)create all public tables needed for this DAG.
 """
 
 
@@ -96,7 +98,7 @@ stage_metadata_to_redshift = StageFromS3ToRedshiftOperator(
     file_type="json",
 )
 stage_metadata_to_redshift.doc_md = """
-#Dummy operator
+# Loads data into Redshift staging table from S3
 """
 
 re_parse_authors_data = PythonOperator(
@@ -114,7 +116,7 @@ re_parse_authors_data = PythonOperator(
     }, 
 )
 re_parse_authors_data.doc_md = """
-#Dummy operator
+# Parses data from S3 locally and re-formats it to easily work with Redshift COPY, then saves it back to S3
 """
 
 stage_authors_to_redshift = StageFromS3ToRedshiftOperator(
@@ -130,7 +132,7 @@ stage_authors_to_redshift = StageFromS3ToRedshiftOperator(
     file_type="csv"
 )
 stage_authors_to_redshift.doc_md = """
-#Dummy operator
+# Loads data into Redshift staging table from S3
 """
 
 re_parse_citations_data = PythonOperator(
@@ -148,7 +150,7 @@ re_parse_citations_data = PythonOperator(
     }, 
 )
 re_parse_citations_data.doc_md = """
-#Dummy operator
+# Parses data from S3 locally and re-formats it to easily work with Redshift COPY, then saves it back to S3
 """
 
 stage_citations_to_redshift = StageFromS3ToRedshiftOperator(
@@ -164,7 +166,7 @@ stage_citations_to_redshift = StageFromS3ToRedshiftOperator(
     file_type="csv"
 )
 stage_citations_to_redshift.doc_md = """
-#Dummy operator
+# Loads data into Redshift staging table from S3
 """
 
 stage_classifications_to_redshift = StageFromS3ToRedshiftOperator(
@@ -180,7 +182,7 @@ stage_classifications_to_redshift = StageFromS3ToRedshiftOperator(
     file_type="csv"
 )
 stage_classifications_to_redshift.doc_md = """
-#Dummy operator
+# Loads data into Redshift staging table from S3
 """
 
 
@@ -196,7 +198,7 @@ quality_check_staged_metadata = DataQualityOperator(
     ]
 )
 quality_check_staged_metadata.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 quality_check_staged_authors = DataQualityOperator(
@@ -209,7 +211,7 @@ quality_check_staged_authors = DataQualityOperator(
     ]
 )
 quality_check_staged_authors.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 quality_check_staged_citations = DataQualityOperator(
@@ -222,7 +224,7 @@ quality_check_staged_citations = DataQualityOperator(
     ]
 )
 quality_check_staged_citations.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 quality_check_staged_classifications = DataQualityOperator(
@@ -235,7 +237,7 @@ quality_check_staged_classifications = DataQualityOperator(
     ]
 )
 quality_check_staged_classifications.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 
@@ -246,7 +248,7 @@ stage_to_main_tables = DummyOperator(
     dag=dag
 )
 stage_to_main_tables.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 load_articles_table = LoadRedshiftTableOperator(
@@ -260,7 +262,7 @@ load_articles_table = LoadRedshiftTableOperator(
     sql_query=helpers.RedshiftSqlQueries.insert_articles_fact
 )
 load_articles_table.doc_md = """
-#Dummy operator
+# Loads and transforms data into fact table from staging tables
 """
 
 load_article_version_dimension_table = LoadRedshiftTableOperator(
@@ -274,7 +276,7 @@ load_article_version_dimension_table = LoadRedshiftTableOperator(
     sql_query=helpers.RedshiftSqlQueries.insert_versions_dim
 )
 load_article_version_dimension_table.doc_md = """
-#Dummy operator
+# Loads and transforms data into dimensional table from staging tables
 """
 
 load_article_authors_dimension_table = LoadRedshiftTableOperator(
@@ -288,7 +290,7 @@ load_article_authors_dimension_table = LoadRedshiftTableOperator(
     sql_query=helpers.RedshiftSqlQueries.insert_authors_dim
 )
 load_article_authors_dimension_table.doc_md = """
-#Dummy operator
+# Loads and transforms data into dimensional table from staging tables
 """
 
 load_article_classifications_dimension_table = LoadRedshiftTableOperator(
@@ -302,7 +304,7 @@ load_article_classifications_dimension_table = LoadRedshiftTableOperator(
     sql_query=helpers.RedshiftSqlQueries.insert_classifications_dim
 )
 load_article_classifications_dimension_table.doc_md = """
-#Dummy operator
+# Loads and transforms data into dimensional table from staging tables
 """
 
 load_article_citations_dimension_table = LoadRedshiftTableOperator(
@@ -316,18 +318,18 @@ load_article_citations_dimension_table = LoadRedshiftTableOperator(
     sql_query=helpers.RedshiftSqlQueries.insert_citations_dim
 )
 load_article_citations_dimension_table.doc_md = """
-#Dummy operator
+# Loads and transforms data into dimensional table from staging tables
 """
 
 
 # Main data quality checks
 
-run_quality_checks = DummyOperator( # DataQualityOperator(
+run_quality_checks = DummyOperator( 
     task_id='run_final_quality_checks',
     dag=dag
 )
 run_quality_checks.doc_md = """
-#Dummy operator
+# Dummy operator - starts sequence of data quality checks for main tables
 """
 
 quality_check_articles_fact = DataQualityOperator(
@@ -341,7 +343,7 @@ quality_check_articles_fact = DataQualityOperator(
     ]
 )
 quality_check_articles_fact.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 quality_check_versions_dim = DataQualityOperator(
@@ -354,7 +356,7 @@ quality_check_versions_dim = DataQualityOperator(
     ]
 )
 quality_check_versions_dim.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 quality_check_authors_dim = DataQualityOperator(
@@ -367,7 +369,7 @@ quality_check_authors_dim = DataQualityOperator(
     ]
 )
 quality_check_authors_dim.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 quality_check_classifications_dim = DataQualityOperator(
@@ -380,7 +382,7 @@ quality_check_classifications_dim = DataQualityOperator(
     ]
 )
 quality_check_classifications_dim.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 quality_check_citations_dim = DataQualityOperator(
@@ -393,18 +395,18 @@ quality_check_citations_dim = DataQualityOperator(
     ]
 )
 quality_check_citations_dim.doc_md = """
-#Dummy operator
+# Runs quality checks and validation scripts on data as described in queries
 """
 
 
 # End
 
 end_operator = DummyOperator(
-    task_id='Stop_execution',  
+    task_id='stop_execution',  
     dag=dag
 )
 end_operator.doc_md = """
-#Dummy operator
+# Dummy operator - marks end of DAG
 """
 
 
