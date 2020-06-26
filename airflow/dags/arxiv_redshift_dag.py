@@ -43,7 +43,9 @@ Email: jacob@jbmadsen.com
 """
 
 
+############################
 # Task Operators
+############################
 
 start_operator = DummyOperator(
     task_id='Begin_execution',  
@@ -52,6 +54,8 @@ start_operator = DummyOperator(
 start_operator.doc_md = """
 #Dummy operator
 """
+
+# Create tables
 
 create_staging_tables_redshift = RedshiftExecuteSQLOperator(
     task_id='create_staging_tables',
@@ -63,6 +67,20 @@ create_staging_tables_redshift = RedshiftExecuteSQLOperator(
 create_staging_tables_redshift.doc_md = """
 #Dummy operator
 """
+
+create_main_tables_redshift = RedshiftExecuteSQLOperator(
+    task_id='create_main_tables',
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id="redshift",
+    sql_query=helpers.RedshiftSqlQueries.create_main_tables
+)
+create_main_tables_redshift.doc_md = """
+#Dummy operator
+"""
+
+
+# Load staged data
 
 stage_metadata_to_redshift = StageFromS3ToRedshiftOperator(
     task_id='stage_metadata',
@@ -115,7 +133,6 @@ stage_authors_to_redshift.doc_md = """
 #Dummy operator
 """
 
-
 re_parse_citations_data = PythonOperator(
     task_id='re_parse_citations',
     dag=dag,
@@ -166,19 +183,66 @@ stage_classifications_to_redshift.doc_md = """
 #Dummy operator
 """
 
-create_main_tables_redshift = RedshiftExecuteSQLOperator(
-    task_id='create_main_tables',
+
+# Staged data quality checks
+
+quality_check_staged_metadata = DataQualityOperator(
+    task_id='quality_check_staged_metadata',  
     dag=dag,
     provide_context=True,
-    redshift_conn_id="redshift",
-    sql_query=helpers.RedshiftSqlQueries.create_main_tables
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftStagedValidationQueries.MetadataFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
 )
-create_main_tables_redshift.doc_md = """
+quality_check_staged_metadata.doc_md = """
 #Dummy operator
 """
 
+quality_check_staged_authors = DataQualityOperator(
+    task_id='quality_check_staged_authors',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftStagedValidationQueries.AuthorsFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
+)
+quality_check_staged_authors.doc_md = """
+#Dummy operator
+"""
+
+quality_check_staged_citations = DataQualityOperator(
+    task_id='quality_check_staged_citations',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftStagedValidationQueries.CitationsFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
+)
+quality_check_staged_citations.doc_md = """
+#Dummy operator
+"""
+
+quality_check_staged_classifications = DataQualityOperator(
+    task_id='quality_check_staged_classifications',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftStagedValidationQueries.ClassificationsFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
+)
+quality_check_staged_classifications.doc_md = """
+#Dummy operator
+"""
+
+
+# Transform to main data
+
 stage_to_main_tables = DummyOperator(
-    task_id='stage_to_main_tables',  
+    task_id='transform_to_main_tables',  
     dag=dag
 )
 stage_to_main_tables.doc_md = """
@@ -255,24 +319,98 @@ load_article_citations_dimension_table.doc_md = """
 #Dummy operator
 """
 
+
+# Main data quality checks
+
 run_quality_checks = DummyOperator( # DataQualityOperator(
-    task_id='run_quality_checks',
+    task_id='run_final_quality_checks',
     dag=dag
 )
 run_quality_checks.doc_md = """
 #Dummy operator
 """
 
-# end_operator = DummyOperator(
-#     task_id='Stop_execution',  
-#     dag=dag
-# )
-# end_operator.doc_md = """
-# #Dummy operator
-# """
+quality_check_articles_fact = DataQualityOperator(
+    task_id='quality_check_articles_fact',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftMainValidationQueries.ArticleFactFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+        {"query": helpers.RedshiftMainValidationQueries.CanJoinFactAndAllDims, "expected_result_function": helpers.DataValidationChecks.ResultsExists},
+    ]
+)
+quality_check_articles_fact.doc_md = """
+#Dummy operator
+"""
+
+quality_check_versions_dim = DataQualityOperator(
+    task_id='quality_check_versions_dim',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftMainValidationQueries.VersionsDimFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
+)
+quality_check_versions_dim.doc_md = """
+#Dummy operator
+"""
+
+quality_check_authors_dim = DataQualityOperator(
+    task_id='quality_check_authors_dim',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftMainValidationQueries.AuthorsDimFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
+)
+quality_check_authors_dim.doc_md = """
+#Dummy operator
+"""
+
+quality_check_classifications_dim = DataQualityOperator(
+    task_id='quality_check_classifications_dim',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftMainValidationQueries.ClassificationsDimFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
+)
+quality_check_classifications_dim.doc_md = """
+#Dummy operator
+"""
+
+quality_check_citations_dim = DataQualityOperator(
+    task_id='quality_check_citations_dim',  
+    dag=dag,
+    provide_context=True,
+    redshift_conn_id='redshift',
+    queries=[
+        {"query": helpers.RedshiftMainValidationQueries.CitationsDimFirstRowsQuery, "expected_result_function": helpers.DataValidationChecks.ValidateNoEmptyColumnsInResult},
+    ]
+)
+quality_check_citations_dim.doc_md = """
+#Dummy operator
+"""
 
 
+# End
+
+end_operator = DummyOperator(
+    task_id='Stop_execution',  
+    dag=dag
+)
+end_operator.doc_md = """
+#Dummy operator
+"""
+
+
+############################
 # Task Dependencies
+############################
 
 start_operator >> [create_staging_tables_redshift,
                    create_main_tables_redshift,
@@ -284,10 +422,10 @@ create_staging_tables_redshift >> [stage_metadata_to_redshift,
                                    re_parse_citations_data >> stage_citations_to_redshift,
                                    stage_classifications_to_redshift]
 
-[stage_metadata_to_redshift,
- stage_authors_to_redshift,
- stage_citations_to_redshift,
- stage_classifications_to_redshift,
+[stage_metadata_to_redshift >> quality_check_staged_metadata,
+ stage_authors_to_redshift >> quality_check_staged_authors,
+ stage_citations_to_redshift >> quality_check_staged_citations,
+ stage_classifications_to_redshift >> quality_check_staged_classifications,
  create_main_tables_redshift] >> stage_to_main_tables
 
 stage_to_main_tables >> [load_articles_table,
@@ -296,6 +434,10 @@ stage_to_main_tables >> [load_articles_table,
                          load_article_classifications_dimension_table,
                          load_article_citations_dimension_table] >> run_quality_checks
 
-#run_quality_checks >> end_operator
+run_quality_checks >> [quality_check_articles_fact,
+                      quality_check_versions_dim,
+                      quality_check_authors_dim,
+                      quality_check_classifications_dim,
+                      quality_check_citations_dim] >> end_operator
 
 # End

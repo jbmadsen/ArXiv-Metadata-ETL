@@ -1,6 +1,7 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from airflow import AirflowException
 
 
 class DataQualityOperator(BaseOperator):
@@ -23,13 +24,17 @@ class DataQualityOperator(BaseOperator):
         
         for element in self.queries:
             try:
+                self.log.info("Running validation query against Redshift")
                 records = redshift.get_records(element['query'])
+                self.log.info("Validation result locally")
                 verdict = element['expected_result_function'].__call__(records)
 
                 if not verdict:
                     err = f"Values for query does not match expected result: {element['query']}"
                     raise ValueError(err)
             except Exception as e:
-                self.log.info(f"Error: {e}")
+                err = f"DataQualityOperator Error: {e}"
+                self.log.info(err)
+                raise AirflowException(err)
 
         self.log.info('DataQualityOperator successfully completed')

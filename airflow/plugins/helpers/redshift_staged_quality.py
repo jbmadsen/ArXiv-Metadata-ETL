@@ -1,15 +1,27 @@
-class RedshiftStagedQualityChecks:
+class RedshiftStagedValidationQueries:
 
-    CheckMetadataQuery = """
-        SELECT id
+    MetadataFirstRowsQuery = """
+        SELECT * 
         FROM staging.metadata
-        LIMIT 1
+        LIMIT 200
     """
 
-    @staticmethod
-    def ValidateMetadataQuery(input):
-        if input is not None:
-            return True
-        return False
+    AuthorsFirstRowsQuery = """
+        SELECT * 
+        FROM staging.authors
+        LIMIT 200
+    """
+
+    CitationsFirstRowsQuery = """
+        SELECT * 
+        FROM staging.authors
+        LIMIT 200
+    """
+
+    ClassificationsFirstRowsQuery = """
+        SELECT * 
+        FROM staging.authors
+        LIMIT 200
+    """
 
 
