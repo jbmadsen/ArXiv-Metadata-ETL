@@ -1,5 +1,7 @@
 # ArXiv-Metadata-ETL
 
+![ArXiv banner](./assets/arxiv_banner.png "ArXiv.org")
+
 ArXiv Metadata from Kaggle ETL pipeline 
  - A Udacity Data Engineering Capstone Project
  
