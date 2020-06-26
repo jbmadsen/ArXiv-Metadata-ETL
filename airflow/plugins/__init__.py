@@ -16,6 +16,7 @@ class UdacityPlugin(AirflowPlugin):
     ]
     helpers = [
         helpers.RedshiftSqlQueries,
+        helpers.RedshiftStagedQualityChecks,
         helpers.load_authors,
         helpers.load_citations,
     ]
