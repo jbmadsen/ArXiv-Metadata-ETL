@@ -2,45 +2,47 @@
 //// -- Tables and References
 
 // Creating tables
-Table AuthorsDim {
+Table authors_dim {
   id int [pk, increment] // auto-increment
-  article_id int
-  metadata_id varchar
+  article_id varchar
   author_name varchar
 }
 
-Table CitationsDim {
-  id int [pk, increment] // auto-increment
-  article_from_id int
-  article_to_id int
+Table citations_dim {
+  id int [pk, increment]
+  article_from_id varchar
+  article_to_id varchar
   citation_from varchar
   citation_to varchar
 }
  
-Table ClassificationsDim {
+Table classifications_dim {
   id int [pk, increment] // auto-increment
   article_id int
   tag_id varchar
   tag_name varchar
 }
 
-Table ArticleFact {
-  article_id int [pk, increment] // auto-increment
+Table article_fact {
+  id int [pk, increment]
+  article_id varchar
+  year varchar
   submitter_name varchar
-  // authors varchar // fix
   title varchar
   comments varchar
-  journalref varchar
+  journal_reference varchar
   doi varchar
   abstract varchar
-  reportno varchar
-  classifications varchar // fix
+  report_number varchar
+  page_url varchar
+  pdf_url varchar
+  classifications varchar
   versions varchar
 }
 
-Table VersionsDim {
+Table versions_dim {
   id int [pk, increment] // auto-increment
-  article_id int
+  article_id varchar
   version varchar
 }
 
@@ -50,12 +52,12 @@ Table VersionsDim {
 //Ref: U.country_code > countries.code  
 //Ref: merchants.country_code > countries.code
 
-Ref: ArticleFact.article_id > VersionsDim.article_id
-Ref: ArticleFact.article_id > ClassificationsDim.article_id
-Ref: ArticleFact.article_id > AuthorsDim.article_id
+Ref: article_fact.article_id > versions_dim.article_id
+Ref: article_fact.article_id > classifications_dim.article_id
+Ref: article_fact.article_id > authors_dim.article_id
 
-Ref: ArticleFact.article_id > CitationsDim.article_from_id
-Ref: ArticleFact.article_id > CitationsDim.article_to_id
+Ref: article_fact.article_id > citations_dim.article_from_id
+Ref: article_fact.article_id > citations_dim.article_to_id
 
 
 //----------------------------------------------//
