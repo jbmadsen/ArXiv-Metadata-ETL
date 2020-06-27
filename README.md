@@ -2,9 +2,21 @@
 
 ![ArXiv banner](./assets/arxiv_banner.png "ArXiv.org")
 
-ArXiv Metadata from Kaggle ETL pipeline 
- - A Udacity Data Engineering Capstone Project
- 
+This repository contains the capstone project submission for the [Udacity Data Engineering Nanodegree](https://www.udacity.com/course/data-engineer-nanodegree--nd027). 
+
+The project uses the following concepts:
+* Building a data pipeline using [Apache Airflow](https://airflow.apache.org/)
+* Loading data for processing from [Amazon S3](https://aws.amazon.com/S3/) and saving processed data to [Amazon Redshift](https://aws.amazon.com/redshift/)
+* Loading Airflow and running the DAG locally through [Docker](https://www.docker.com/)
+
+
+# Context 
+
+[ArXiv](https://arxiv.org/) is a free distribution service and an open-access archive for more than 1.5MM scholarly articles in the fields of physics, mathematics, computer science, quantitative biology, quantitative finance, statistics, electrical engineering and systems science, and economics. arXiv is a collaboratively funded, community-supported resource founded by [Paul Ginsparg](https://en.wikipedia.org/wiki/Paul_Ginsparg) in 1991 and maintained and operated by [Cornell University](https://www.cornell.edu/). *(Description from kaggle)*
+
+In this project, we will need to load [metadata from ArXiv](https://www.kaggle.com/Cornell-University/arxiv) from S3, process the data into analytics tables on Redshift, and verify data integrety using tests. 
+We implement this process using Apache Airflow.
+
 
 ## Plan of attack
 
