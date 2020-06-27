@@ -14,13 +14,13 @@ class RedshiftStagedValidationQueries:
 
     CitationsFirstRowsQuery = """
         SELECT * 
-        FROM staging.authors
+        FROM staging.citations
         LIMIT 200
     """
 
     ClassificationsFirstRowsQuery = """
         SELECT * 
-        FROM staging.authors
+        FROM staging.classifications
         LIMIT 200
     """
 

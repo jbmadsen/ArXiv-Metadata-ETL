@@ -8,15 +8,15 @@ def download_data():
 
     Dependant libraries: kaggle
     """
-
-    print("Downloading kaggle data")
-    print("Authenticating")
+    print("Starting kaggle data download")
+    
+    print("Authenticating to kaggle")
     api = KaggleApi()
     api.authenticate()
 
     dataset = 'Cornell-University/arxiv'
     print(f"Downloading {dataset}")
-    api.dataset_download_files('Cornell-University/arxiv', path='./data/')
+    api.dataset_download_files('Cornell-University/arxiv', path='../data/')
     
     print("Done")
 

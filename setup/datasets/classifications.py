@@ -40,7 +40,8 @@ def download_data():
     headers = {"User-Agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"}
     page = 'https://arxiv.org/help/api/user-manual'
 
-    print("Downloading classifications")
+    print("Starting classifications download")
+
     print("Creating requests session")
 
     with requests.Session() as s:
@@ -63,7 +64,7 @@ def download_data():
 
     # Save dataframe to disk
     print("Saving data to disk")
-    df.to_csv('./data/subject-classifications.csv', index=False)
+    df.to_csv('../data/subject-classifications.csv', index=False)
 
     print("Done")
 

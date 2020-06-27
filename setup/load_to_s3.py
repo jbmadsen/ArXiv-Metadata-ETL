@@ -54,22 +54,27 @@ def upload_file(s3_client, bucket_name, path, folder_name, file_name):
     Returns:
         (object): Upload response from boto3 S3 client
     """
-    # https://stackoverflow.com/questions/41827963/track-download-progress-of-s3-file-using-boto3-and-callbacks
-    full_name = os.path.join(folder_name, file_name)
-    s3_path = f'staging/{folder_name}/{file_name}'
-    # Create progress info
-    statinfo = os.stat(full_name)
-    up_progress = progressbar.progressbar.ProgressBar(maxval=statinfo.st_size)
-    up_progress.start()
-    # Helper function for progress display
-    def upload_progress(chunk):
-        up_progress.update(up_progress.currval + chunk)
+    try:
+        # https://stackoverflow.com/questions/41827963/track-download-progress-of-s3-file-using-boto3-and-callbacks
+        full_name = os.path.join(path, folder_name, file_name)
+        print("Uploading:", full_name)
+        s3_path = f'staging/{folder_name}/{file_name}'
+        # Create progress info
+        statinfo = os.stat(full_name)
+        up_progress = progressbar.progressbar.ProgressBar(maxval=statinfo.st_size)
+        up_progress.start()
+        # Helper function for progress display
+        def upload_progress(chunk):
+            up_progress.update(up_progress.currval + chunk)
 
-    # Upload to S3
-    response = s3_client.upload_file(full_name, bucket_name, s3_path, Callback=upload_progress)
-    # Done
-    up_progress.finish()
-    return response
+        # Upload to S3
+        response = s3_client.upload_file(full_name, bucket_name, s3_path, Callback=upload_progress)
+        # Done
+        up_progress.finish()
+        return response
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
 
 
 if __name__ == "__main__":
@@ -92,25 +97,29 @@ if __name__ == "__main__":
     print("Copying data")
 
     # Move files to individual folders
-    os.makedirs(os.path.dirname('../data/loading/metadata/'), exist_ok=True)
     src = '../data/loading/arxiv-metadata-oai-snapshot.json'
     dst = '../data/loading/metadata/arxiv-metadata-oai-snapshot.json'
-    shutil.move(src, dst)
+    if os.path.exists(src):
+        os.makedirs(os.path.dirname('../data/loading/metadata/'), exist_ok=True)
+        shutil.move(src, dst)
 
-    os.makedirs(os.path.dirname('../data/loading/authors/'), exist_ok=True)
     src = '../data/loading/authors-parsed.json'
     dst = '../data/loading/authors/authors-parsed.json'
-    shutil.move(src, dst)
+    if os.path.exists(src):
+        os.makedirs(os.path.dirname('../data/loading/authors/'), exist_ok=True)
+        shutil.move(src, dst)
 
-    os.makedirs(os.path.dirname('../data/loading/citations/'), exist_ok=True)
     src = '../data/loading/internal-citations.json'
     dst = '../data/loading/citations/internal-citations.json'
-    shutil.move(src, dst)
+    if os.path.exists(src):
+        os.makedirs(os.path.dirname('../data/loading/citations/'), exist_ok=True)
+        shutil.move(src, dst)
 
-    os.makedirs(os.path.dirname('../data/loading/classifications/'), exist_ok=True)
     src = '../data/subject-classifications.csv'
     dst = '../data/loading/classifications/subject-classifications.csv'
-    shutil.move(src, dst)
+    if os.path.exists(src):
+        os.makedirs(os.path.dirname('../data/loading/classifications/'), exist_ok=True)
+        shutil.move(src, dst)
 
     # Sync data/loaded folder to s3
     # https://dev.to/razcodes/how-to-copy-files-to-s3-using-boto3-41fp
@@ -124,12 +133,12 @@ if __name__ == "__main__":
         for file in os.listdir(dir):
             file_name = os.fsdecode(file)
             if file_name.endswith(".json") or file_name.endswith(".csv"): 
-                print("Uploading", file_name)
-                #full_name = os.path.join(folder_name, file_name)
-                #response = s3_client.upload_file(full_name, bucket_name, f'staging/{file_name}')
-                response = upload_file(s3_client, bucket_name, data_folder_name, folder_name, file_name)
-                if response is not None:
-                    print("HTTPStatusCode:", response['ResponseMetadata']['HTTPStatusCode'])
+                try:
+                    response = upload_file(s3_client, bucket_name, data_folder_name, folder_name, file_name)
+                    if response is not None:
+                        print("HTTPStatusCode:", response['ResponseMetadata']['HTTPStatusCode'])
+                except Exception as e:
+                    print(f"Error: {e}")
     
     # Delete data/loaded folder 
     print("Deleting temp folder")

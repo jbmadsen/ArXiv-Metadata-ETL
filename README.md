@@ -43,3 +43,21 @@ TODO:
 	Updated doc-strings all around
 	Updated this README to reflect project files, setup and execution
 ```
+
+```
+Setup:
+
+	Fill in information in ./setup/aws.cfg
+	Create user on Kaggle and add username and key to ~/.kaggle/kaggle.json
+
+	From airflow folder:
+		>>> docker-compose up -d
+
+	From setup folder:
+		>>> .\add_airflow_connections.ps1
+		>>> python .\download_datasets.py
+		>>> python .\load_to_s3.py
+		>>> python .\create_redshift_cluster.py
+
+```
+
