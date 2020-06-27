@@ -62,6 +62,12 @@ Updated this README to reflect project files, setup and execution
 
 	From Airflow web:
 		Enable and run the DAG
+
+	To shut it down again, from setup folder:
+		>>> python .\terminate_redshift_cluster.py (note: this removes all data from Redshift as well)
+
+	To shut it down again, from airflow folder:
+		>>> docker-compose down
 ```
 
 ## Final results in main tables:
