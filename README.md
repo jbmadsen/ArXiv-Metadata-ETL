@@ -12,6 +12,10 @@ The project uses the following concepts:
 * Loading data for processing from [Amazon S3](https://aws.amazon.com/S3/) and saving processed data to [Amazon Redshift](https://aws.amazon.com/redshift/)
 * Loading Airflow and running the DAG locally through [Docker](https://www.docker.com/)
 
+## Rationale for the choice of tools and technologies for the project
+
+TODO
+
 
 # Context 
 
@@ -19,6 +23,10 @@ The project uses the following concepts:
 
 In this project, we will need to load [metadata from ArXiv](https://www.kaggle.com/Cornell-University/arxiv) from S3, process the data into analytics tables on Redshift, and verify data integrety using tests. 
 We implement this process using Apache Airflow.
+
+## How often the data should be updated and why?
+
+TODO
 
 
 # Project Structure
@@ -101,3 +109,20 @@ Data loaded from S3 is processed and transformed into five main Fact and Dimensi
 
 TODO
 
+
+
+# Scenarios 
+
+## How you would approach the problem differently under the following scenarios
+
+### The data was increased by 100x.
+    
+* Increase the size of the current Redshift Cluster. For this project I have 2 nodes in a cluster with combined 320 GB of storage. This can easily be scaled both vertically and horizontally, both to increase the individual node, as well as adding more nodes to the cluster.
+
+###  The data populates a dashboard that must be updated on a daily basis by 7am every day.
+
+* This should be created as a seperate Airflow DAG from the one in this project, that loads from S3. This new DAG should be created to update the dashboard, with a SLA for completing the task no later than 7:00 AM.
+
+### The database needed to be accessed by 100+ people.
+
+* I feel that with the current setup of leveraging a Redshift cluter, this is already possible. Again, as in the first scenario, it might require that the cluster is scaled to a larger size than currently.
