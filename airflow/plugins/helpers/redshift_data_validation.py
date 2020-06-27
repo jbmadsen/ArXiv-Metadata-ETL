@@ -6,7 +6,18 @@ class DataValidationChecks:
 
     @staticmethod
     def ValidateNoEmptyColumnsInResult(input_list):
-        
+        """Validates that no column in input_list is empty
+
+        Args:
+            input_list (List): List containing rows of data from Redshift in Tuple format
+
+        Raises:
+            AirflowException: Raises an exception if the list cannot be parsed
+
+        Returns:
+            boolean: Returns whether the input_list matches the criteria in the description
+        """
+
         logging.info(f"Validating no empty columns in result... checking {len(input_list)} elements")
         passed_list = None
         
@@ -30,6 +41,17 @@ class DataValidationChecks:
     
     @staticmethod
     def ResultsExists(input_list):
+        """Validates that ANY data exists in the input_list
+
+        Args:
+            input_list (List): List containing rows of data from Redshift in Tuple format
+
+        Raises:
+            AirflowException: Raises an exception if the input is not a list or list is empty
+
+        Returns:
+            boolean: Returns whether the input_list matches the criteria in the description
+        """
         
         logging.info(f"Validating results exists... checking {len(input_list)} elements")
 

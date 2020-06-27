@@ -23,6 +23,9 @@ class LoadRedshiftTableOperator(BaseOperator):
         
         
     def execute(self, context):
+        """
+        Truncates table (if desired) and runs SQL query on Redshift
+        """
         self.log.info("Getting Redshift hook")
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 

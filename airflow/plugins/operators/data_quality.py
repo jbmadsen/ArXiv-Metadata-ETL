@@ -19,6 +19,14 @@ class DataQualityOperator(BaseOperator):
 
 
     def execute(self, context):
+        """
+        For each combination of query and validation function in self.queries, 
+        this function runs the query and parses the result of the query into the validation function
+        and returns the function verdict
+
+        Raises:
+            AirflowException: Raises an exception if the verdict is false
+        """
         self.log.info("Getting Redshift hook")
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         

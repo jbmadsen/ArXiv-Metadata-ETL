@@ -7,6 +7,11 @@ from airflow.models import Connection
 
 
 def create_connection(config):
+    """Creates a Connection object for Airflow
+
+    Args:
+        config (Dictionary): A dictionary containing all information needed to create a Connection object
+    """
     print(f"Creating and adding connection {config['conn_id']}")
 
     # Create connection object

@@ -7,7 +7,25 @@ from airflow.hooks.S3_hook import S3Hook
 
 
 def load_citations(aws_credentials_id, redshift_connection_id, s3_credentials_id, region, bucket, file_name, **kwargs):
+    """
+    Downloads file from S3, parses and re-saves it to a format more suited for COPY to Redshift, 
+    then re-uploads file back to S3
 
+    Args:
+        aws_credentials_id (string): Airflow connection string to connect to AWS
+        redshift_connection_id (string): Airflow connection string to connect to Redshift (unused currently)
+        s3_credentials_id (string): Airflow connection string to connect to S3
+        region (string): Specifies the AWS region you are connecting to
+        bucket (string): Name of the bucket of the file
+        file_name (string): Name of the file within the bucket
+
+    Raises:
+        AirflowException: Throws exception if no file can be found matching the input parameters
+
+    Returns:
+        boolean: Returns True if the function ran successfully
+    """
+    
     logging.info("Getting S3 hook")
     s3 = S3Hook(s3_credentials_id)
     
