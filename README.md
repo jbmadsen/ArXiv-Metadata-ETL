@@ -1,4 +1,4 @@
-# ArXiv-Metadata-ETL
+# ArXiv Metadata ETL Pipeline with Airflow
 
 ![ArXiv banner](./assets/arxiv_banner.png "ArXiv.org")
 
