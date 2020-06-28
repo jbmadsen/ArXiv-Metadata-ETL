@@ -12,10 +12,6 @@ The project uses the following concepts:
 * Loading data for processing from [Amazon S3](https://aws.amazon.com/S3/) and saving processed data to [Amazon Redshift](https://aws.amazon.com/redshift/)
 * Loading Airflow and running the DAG locally through [Docker](https://www.docker.com/)
 
-## Rationale for the choice of tools and technologies for the project
-
-TODO
-
 
 # Context 
 
@@ -26,7 +22,7 @@ We implement this process using Apache Airflow.
 
 ## How often the data should be updated and why?
 
-TODO
+The metadata on Kaggle is being updated monthly (as noted on the Kaggle page), hence we should be updating run this process at a monthly interval to keep up to date.
 
 
 # Project Structure
@@ -41,7 +37,6 @@ TODO
 |[.gitignore](./.gitignore)| All the things that should NOT be committed to Git. |
 |[LICENSE](./LICENSE)| In case anyone wants to re-use stuff from this repository. |
 |[README.md](./README.md)| This file, descriping the repository and the content. |
-
 
 
 # How to run 
@@ -104,11 +99,6 @@ Data loaded from S3 is processed and transformed into five main Fact and Dimensi
 | citations_dim | 9.346.457 |
 | classifications_dim | 2.735.492 |
 | versions_dim | 2.618.307 |
-
-## Quality Checks
-
-TODO
-
 
 
 # Scenarios 
